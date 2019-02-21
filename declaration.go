@@ -9,6 +9,7 @@ type Declaration func(Declarer) error
 type Declarer interface {
 	QueueDeclare(name string, durable, autoDelete, exclusive, noWait bool, args amqp.Table) (amqp.Queue, error)
 	ExchangeDeclare(name, kind string, durable, autoDelete, internal, noWait bool, args amqp.Table) error
+	ExchangeBind(destination, key, source string, noWait bool, args amqp.Table) error
 	QueueBind(name, key, exchange string, noWait bool, args amqp.Table) error
 }
 
@@ -51,6 +52,18 @@ func DeclareBinding(b Binding) Declaration {
 		return c.QueueBind(b.Queue.Name,
 			b.Key,
 			b.Exchange.Name,
+			false,
+			b.Args,
+		)
+	}
+}
+
+// DeclareBinding is a way to declare AMQP binding between AMQP queue and exchange
+func DeclareExchangeBinding(b ExchangeBinding) Declaration {
+	return func(c Declarer) error {
+		return c.ExchangeBind(b.Destination.Name,
+			b.Key,
+			b.Source.Name,
 			false,
 			b.Args,
 		)

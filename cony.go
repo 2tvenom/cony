@@ -37,6 +37,14 @@ type Binding struct {
 	Args     amqp.Table
 }
 
+// Binding used to declare binding between AMQP Queue and AMQP Exchange
+type ExchangeBinding struct {
+	Source      *Exchange
+	Destination Exchange
+	Key         string
+	Args        amqp.Table
+}
+
 type mqDeleter interface {
 	deletePublisher(*Publisher)
 	deleteConsumer(*Consumer)
